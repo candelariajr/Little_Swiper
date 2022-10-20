@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Landing Page: Pi Open Device</title>
+</head>
+<style>
+    /*
+        Step 1: Reset all CSS preset margins and padding!
+    */
+    /*
+        http://meyerweb.com/eric/tools/css/reset/
+        v2.0 | 20110126
+        License: none (public domain)
+    */
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed,
+    figure, figcaption, footer, header,
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        vertical-align: baseline;
+    }
+    /* HTML5 display-role reset for older browsers */
+    article, aside, details, figcaption, figure,
+    footer, header, menu, nav, section {
+        display: block;
+    }
+    body {
+        line-height: 1;
+    }
+    ol, ul {
+        list-style: none;
+    }
+    blockquote, q {
+        quotes: none;
+    }
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+        content: '';
+        content: none;
+    }
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    #readCountView{
+	font-size: 35px;
+    }
+
+    *{font-family: Arial, Verdana, sans-serif;
+         cursor:none;
+    }
+    html{width: 100%; height: 100%;}
+    body{margin: 0; padding: 0; width: 100%; height: 100%}
+    #container{background-color: rgba(0, 184, 255, 0.93); width: 100%; height: 100%;}
+    .rowContainer{height: 16.6%;}
+    .pane{color: black; float: left; height: 100%; text-align: center; font-weight: bold; vertical-align: middle;
+        line-height: 79px; font-size: 100%; outline: 1px solid black;
+    }
+    .halfPane{width: 50%; display: inline-block}
+    .threeEighthsPane{width: 37.5%; display:inline-block}
+    .oneEighthsPane{width: 12.5%;}
+    .fillContainer{
+        height: 83.4%; outline: 1px solid black;
+    }
+    #statusView{background-color: #a9d08f}
+
+</style>
+<body>
+    <div id="container">
+        <div class="rowContainer">
+            <div id="statusView" class="pane halfPane"><span id="locationNameView">Location: </span><span id="locationName">Coffee Shop</span></div>
+            <div id="readCountNameView" class="pane threeEighthsPane">Read Count:</div>
+            <div id="readCountView" class="pane oneEighthsPane">0</div>
+        </div>
+        <div class="fillContainer">
+            <div id="fillBox"></div>
+        </div>
+    </div>
+</body>
+<script>
+    (function(){
+        //listen to key presses
+        var cardNumber = "";
+        var readCount = 0;
+        var cardLocation = 1;
+        var cardRead = false;
+
+        window.onkeydown = function(e){
+            //var code = e.keyCode ? e.keyCode : e.which;
+            var charValue = String.fromCharCode(e.keyCode);
+            //console.log(charValue);
+            if(charValue == '»') {
+                cardRead = false;
+                sendCard();
+            }
+            if(cardRead){
+                cardNumber+=charValue;
+            }
+            if(charValue == 'º') {
+                cardRead = true;
+            }
+            if(cardNumber.length > 10){
+                dumpRawData();
+            }
+        };
+
+        function sendCard(){
+            console.log(cardNumber);
+            if(cardNumber.length == 9){
+                sendValidCard(cardNumber);
+                cardNumber = "";
+            }
+        }
+
+        function sendValidCard(cardNumber){
+            callGetRequest("app.php?action=addOfflineTransaction&cardNumber="
+                    + cardNumber +"&location=" + cardLocation, readReply);
+            callGetRequest("https://jc-one.library.appstate.edu/cardReader/dbauth.php?cardNumber=" + cardNumber + "&appId=3", reply2);        
+        }
+        
+        function reply2(count){
+			//NOT USED
+			console.log(count);
+			var countObj = JSON.parse(count);
+			document.getElementById("readCountView").innerHTML = countObj[0].count;
+		}
+
+        function callGetRequest(url, callback){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function(){
+                if(this.readyState ==4 && this.status == 200){
+                    callback(xhttp.responseText);
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+        function readReply(reply){
+            readCount++;
+            document.getElementById("readCountView").innerHTML = readCount;
+            console.log(reply);
+        }
+    })();
+</script>
+</html>
