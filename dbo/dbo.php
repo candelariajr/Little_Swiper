@@ -27,5 +27,5 @@ function message($message){
 if($pdo && isset($_GET['getCount'])){
     $stmt= $pdo->query('SELECT count(*) from entries');
     $resultRow = $stmt->fetch();
-    message(json_encode($resultRow));
+    message(json_decode(json_encode($resultRow)));
 }
