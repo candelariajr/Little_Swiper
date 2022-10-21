@@ -49,7 +49,7 @@ $regexTemplate = "/^[0-9]{9}$/";
  *
  *
  * */
-/** @var boolean THE FACT $philCollinsIsAwesome */
+/** @var boolean $philCollinsIsAwesome THE FACT $philCollinsIsAwesome */
 $philCollinsIsAwesome = true;
 
 if($debugState){
@@ -84,6 +84,8 @@ if(isset($_GET['action'])){
         setCurrentLocation($_GET['location']);
     }if($action == "addOfflineTransaction"){
         addOfflineTransaction();
+    }if($action == "getCount"){
+        getCount();
     }
     //TODO: Remove this!
     if($action == "test"){
@@ -211,6 +213,7 @@ function addOfflineTransaction(){
  * this is called by:
  * getLocations
  * setLocations..
+ * getCount
  *
  * EVERY FREAKING PIECE OF THIS PROGRAM USES THIS FUNCTION
  *
@@ -220,9 +223,8 @@ function getJsonFromConfigFile(){
     //TODO: Wrap this in a try/catch and toss us out an error message with getReply
     //open the file
     $jsonFile = file_get_contents("./".$fileName);
-    $jsonData = json_decode($jsonFile, true);
-    //return the file
-    return $jsonData;
+    return json_decode($jsonFile, true);
+
 }
 
 /*
@@ -236,7 +238,7 @@ function saveJsonToConfigFile($jsonObject){
     $missingElements = array();
 
     //The importance of a template.
-    //If an algorithm is deleting info from the config.json file- the template stops it
+    //If an algorithm is deleting info from the config.json file the template stops it
     foreach ($configFileTemplate as $templateEntity){
         if(!isset($jsonObject[$templateEntity])){
             $templateOK = false;
@@ -324,4 +326,11 @@ function getCurrentLocation(){
 
 function setCurrentLocation($locationInt){
     
+}
+
+function getCount(){
+    $returnArray = array();
+    $data = getJsonFromConfigFile();
+    $returnArray['count'] = sizeof($data['offline-list']);
+    echo json_encode($returnArray);
 }

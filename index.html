@@ -8,11 +8,6 @@
     /*
         Step 1: Reset all CSS preset margins and padding!
     */
-    /*
-        http://meyerweb.com/eric/tools/css/reset/
-        v2.0 | 20110126
-        License: none (public domain)
-    */
     html, body, div, span, applet, object, iframe,
     h1, h2, h3, h4, h5, h6, p, blockquote, pre,
     a, abbr, acronym, address, big, cite, code,
@@ -54,6 +49,8 @@
         border-collapse: collapse;
         border-spacing: 0;
     }
+    /* END CSS RESET*/
+
     #readCountView{
 	font-size: 35px;
     }
@@ -76,6 +73,19 @@
     }
     #statusView{background-color: #a9d08f}
 
+    .option{
+        display: inline-block;
+        padding: 15%;
+        border: 1px solid black;
+        margin: 10px;
+        font-weight: bold;
+    }
+
+    .option.selected{
+        background-color: darkblue;
+        color: white;
+    }
+
 </style>
 <body>
     <div id="container">
@@ -85,30 +95,51 @@
             <div id="readCountView" class="pane oneEighthsPane">0</div>
         </div>
         <div class="fillContainer">
-            <div id="fillBox"></div>
+            <div id="fillBox">
+                <div id="option1" class="option">Small</div>
+                <div id="option2" class="option">Large</div>
+            </div>
         </div>
     </div>
 </body>
 <script>
     (function(){
+        //MVP Demo Code TODO: FIX
+        document.getElementById("option1").addEventListener("click", function(){
+            document.getElementById("option2").className = "option";
+            document.getElementById("option1").className = "option selected";
+        });
+
+        document.getElementById("option2").addEventListener("click", function(){
+            selectLarge();
+        });
+
+
+
+        let readCount = 0;
+        //get Initial Count on Startup
+        getCount();
         //listen to key presses
-        var cardNumber = "";
-        var readCount = 0;
-        var cardLocation = 1;
-        var cardRead = false;
+        let cardNumber = "";
+        let cardLocation = 1;
+        let cardRead = false;
+        let defaultOption = 1;
+        let optionSelect = defaultOption;
+        selectLarge();
 
         window.onkeydown = function(e){
             //var code = e.keyCode ? e.keyCode : e.which;
-            var charValue = String.fromCharCode(e.keyCode);
+            let charValue = String.fromCharCode(e.keyCode);
             //console.log(charValue);
-            if(charValue == '»') {
+            if(charValue === '»') {
                 cardRead = false;
                 sendCard();
+                selectLarge();
             }
             if(cardRead){
                 cardNumber+=charValue;
             }
-            if(charValue == 'º') {
+            if(charValue === 'º') {
                 cardRead = true;
             }
             if(cardNumber.length > 10){
@@ -116,17 +147,27 @@
             }
         };
 
+        function selectLarge(){
+            document.getElementById("option1").className = "option";
+            document.getElementById("option2").className = "option selected";
+        }
+
         function sendCard(){
             console.log(cardNumber);
-            if(cardNumber.length == 9){
+            if(cardNumber.length === 9){
                 sendValidCard(cardNumber);
                 cardNumber = "";
             }
         }
 
         function sendValidCard(cardNumber){
-            callGetRequest("app.php?action=addOfflineTransaction&cardNumber="
-                    + cardNumber +"&location=" + cardLocation, readReply);
+            let urlString = "app.php?action=addOfflineTransaction&cardNumber="
+                + cardNumber +"&location=" + cardLocation;
+            if(optionSelect){
+                urlString += "&option=" + optionSelect;
+            }
+            callGetRequest(urlString, readReply);
+            //Suspension of Remote Server due to WPA Supplicant mapping issues.
             //callGetRequest("https://jc-one.library.appstate.edu/cardReader/dbauth.php?cardNumber=" + cardNumber + "&appId=3", reply2);        
         }
         
@@ -140,7 +181,7 @@
         function callGetRequest(url, callback){
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function(){
-                if(this.readyState ==4 && this.status == 200){
+                if(this.readyState === 4 && this.status === 200){
                     callback(xhttp.responseText);
                 }
             };
@@ -150,8 +191,26 @@
 
         function readReply(reply){
             readCount++;
-            document.getElementById("readCountView").innerHTML = readCount;
+            document.getElementById("readCountView").innerHTML = "" + readCount; //Make sure it's cast as String
             console.log(reply);
+        }
+
+        function dumpRawData(){
+            // function stub
+        }
+
+        function getCount(){
+            let url = "app.php?action=getCount";
+            callGetRequest(url, setCount)
+        }
+
+        function setCount(dataString){
+            let dataObj = JSON.parse(dataString);
+            console.log(dataObj);
+            if(dataObj['count'] !== undefined){
+                readCount = dataObj['count'];
+                document.getElementById("readCountView").innerHTML = "" + readCount; //Make sure it's cast as String
+            }
         }
     })();
 </script>
