@@ -123,7 +123,7 @@
         let cardNumber = "";
         let cardLocation = 1;
         let cardRead = false;
-        let defaultOption = 1;
+        const defaultOption = 2;
         let optionSelect = defaultOption;
         selectLarge();
 
@@ -150,6 +150,7 @@
         function selectLarge(){
             document.getElementById("option1").className = "option";
             document.getElementById("option2").className = "option selected";
+            optionSelect = 2
         }
 
         function sendCard(){
