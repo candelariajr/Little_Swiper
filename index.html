@@ -154,7 +154,7 @@
         }
 
         function sendCard(){
-            console.log(cardNumber);
+            //console.log(cardNumber);
             if(cardNumber.length === 9){
                 sendValidCard(cardNumber);
                 cardNumber = "";
@@ -174,7 +174,7 @@
         
         function reply2(count){
 			//NOT USED
-			console.log(count);
+			//console.log(count);
 			var countObj = JSON.parse(count);
 			document.getElementById("readCountView").innerHTML = countObj[0].count;
 		}
@@ -193,7 +193,7 @@
         function readReply(reply){
             readCount++;
             document.getElementById("readCountView").innerHTML = "" + readCount; //Make sure it's cast as String
-            console.log(reply);
+            //console.log(reply);
         }
 
         function dumpRawData(){
@@ -207,7 +207,7 @@
 
         function setCount(dataString){
             let dataObj = JSON.parse(dataString);
-            console.log(dataObj);
+            //console.log(dataObj);
             if(dataObj['count'] !== undefined){
                 readCount = dataObj['count'];
                 document.getElementById("readCountView").innerHTML = "" + readCount; //Make sure it's cast as String
