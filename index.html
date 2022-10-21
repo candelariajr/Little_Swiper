@@ -127,7 +127,7 @@
         function sendValidCard(cardNumber){
             callGetRequest("app.php?action=addOfflineTransaction&cardNumber="
                     + cardNumber +"&location=" + cardLocation, readReply);
-            callGetRequest("https://jc-one.library.appstate.edu/cardReader/dbauth.php?cardNumber=" + cardNumber + "&appId=3", reply2);        
+            //callGetRequest("https://jc-one.library.appstate.edu/cardReader/dbauth.php?cardNumber=" + cardNumber + "&appId=3", reply2);        
         }
         
         function reply2(count){
