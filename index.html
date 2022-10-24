@@ -123,8 +123,8 @@
         let cardNumber = "";
         let cardLocation = 1;
         let cardRead = false;
-        const defaultOption = 2;
-        let optionSelect = defaultOption;
+        const DEFAULT_OPTION = 2;
+        let optionSelect = DEFAULT_OPTION;
         selectLarge();
 
         window.onkeydown = function(e){
@@ -171,13 +171,6 @@
             //Suspension of Remote Server due to WPA Supplicant mapping issues.
             //callGetRequest("https://jc-one.library.appstate.edu/cardReader/dbauth.php?cardNumber=" + cardNumber + "&appId=3", reply2);        
         }
-        
-        function reply2(count){
-			//NOT USED
-			//console.log(count);
-			var countObj = JSON.parse(count);
-			document.getElementById("readCountView").innerHTML = countObj[0].count;
-		}
 
         function callGetRequest(url, callback){
             var xhttp = new XMLHttpRequest();

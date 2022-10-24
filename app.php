@@ -60,7 +60,7 @@ if($debugState){
 
 /*
  * GET: Get requests are computationally faster and require less resources.
- * GET arguments determine which function is called for the each operation. The operations in the future will
+ * GET arguments determine which function is called for each operation. The operations in the future will
  * be determined by app specification once profiles go live
  *
  * This is the start of the app
@@ -191,6 +191,7 @@ function addOfflineTransaction(){
     $jsonData = getJsonFromConfigFile();
     $cardNumber = "";
     $location = "";
+    $option = -1;
     if(isset($_GET['cardNumber']) && isset($_GET['location'])){
         $cardNumber = $_GET['cardNumber'];
         $location = $_GET['location'];
@@ -199,7 +200,10 @@ function addOfflineTransaction(){
         $cardNumber = $_GET['cardNumber'];
         $location = 0;
     }
-    $offlineObject = array('cardNumer' => $cardNumber, 'location' => $location, 'date' => date("Y-m-d H:i:s"));
+    if(isset($_GET['option'])){
+        $option = $_GET['option'];
+    }
+    $offlineObject = array('cardNumber' => $cardNumber, 'option' => $option, 'location' => $location, 'date' => date("Y-m-d H:i:s"));
     //$jsonData['offline-list'].push(array('' => ''));
     array_push($jsonData['offline-list'], $offlineObject);
     saveJsonToConfigFile($jsonData);
